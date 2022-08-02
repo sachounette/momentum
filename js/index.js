@@ -10,6 +10,7 @@ time.textContent=`${currentTime}`;
 setTimeout(showTime, 1000);
 setTimeout(showDate, 1000);
 setTimeout(getTimeOfDay, 1000);
+setTimeout(bgChange, 1000);
 
 }
   showTime();
@@ -206,7 +207,7 @@ async function getWeather() {
 /* Добавляем цитаты */
 
 function getRandomQuoteIndex() {
-    let randIndex = Math.floor(Math.random() * 1643) + 1;
+    let randIndex = Math.floor(Math.random() * 1642) + 1;
     return randIndex;
 }
 let randIndex = getRandomQuoteIndex();
@@ -233,7 +234,96 @@ quoteBtn.addEventListener('click', () => {
 });
 
 
+/*АУДИОПЛЕЕР*/
 
+const playList = [
+    {      
+      title: 'Aqua Caelestis',
+      src: '../assets/sounds/Aqua Caelestis.mp3',
+      duration: '00:58'
+    },  
+    {      
+      title: 'River Flows In You',
+      src: '../assets/sounds/River Flows In You.mp3',
+      duration: '03:50'
+    },
+    {      
+        title: 'Summer Wind',
+        src: '../assets/sounds/Summer Wind.mp3',
+        duration: '01:50'
+      },
+      {      
+        title: 'Ennio Morricone',
+        src: '../assets/sounds/Ennio Morricone.mp3',
+        duration: '01:37'
+      }
+  ]
+  const songs = document.querySelector('.play-list');
 
+  for (let i = 0; i < playList.length; i++) {
+  let liChild = document.createElement("li");
+  liChild.classList.add('play-item')
+  liChild.textContent = `${playList[i].title}`;
+  songs.appendChild(liChild);
+  }
 
+let isPlay = false;
+const playBtn = document.querySelector('.play');
+function changePlayBtn() {
+    if (!isPlay) {
+        playBtn.classList.remove('play');
+        playBtn.classList.add('pause');
+    }
+    else {
+        playBtn.classList.add('play');
+        playBtn.classList.remove('pause');
 
+    }
+}
+playBtn.addEventListener('click', changePlayBtn);
+let startAudio = 0;
+const songsList = document.querySelectorAll('.play-item');
+const audio = new Audio();
+function playAudio() {
+    if(isPlay == false) {
+        audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
+        songsList.forEach(el => el.classList.remove('item-active'))
+       songsList[startAudio].classList.add('item-active');
+        audio.play(); 
+        isPlay = true;
+    }
+   else if( isPlay == true) {
+    audio.pause();
+    isPlay = false;
+   }
+  }
+  
+  playBtn.addEventListener('click', playAudio);
+ 
+const rightBtnPlayer = document.querySelector('.play-next'); 
+
+rightBtnPlayer.addEventListener('click', () => {
+    startAudio++;
+
+    if(startAudio > 3) {
+        startAudio = 0;
+    }
+    isPlay = false;
+    changePlayBtn();
+    playAudio();
+   
+})
+
+const leftBtnPlayer = document.querySelector('.play-prev'); 
+
+leftBtnPlayer.addEventListener('click', () => {
+    startAudio--;
+
+    if(startAudio < 0) {
+        startAudio = 3;
+    }
+    isPlay = false;
+    changePlayBtn();
+    playAudio();
+   
+})
