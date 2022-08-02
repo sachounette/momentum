@@ -1,3 +1,4 @@
+//@import quotes;
 
 /* Добавляем время на страницу*/
 const time = document.querySelector('.time');
@@ -128,9 +129,6 @@ rightBtn.addEventListener('click', () => {
 
 
 })
-
-
-
 /*Добавляем виджет погоды*/
 
 //ключ апи: https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric
@@ -140,12 +138,9 @@ const weatherDescription = document.querySelector('.weather-description');
 const wind = document.querySelector('.wind');
 const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
-
-
 async function defaultWeather() {
-    console.log(localStorage.city)
-    if(localStorage.city == undefined) {
-        console.log(city.value)
+    if(localStorage.city == undefined || localStorage.city.length == 0) {
+        city.value = "Minsk";
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
         const res = await fetch(url);
         const data = await res.json();  
@@ -159,37 +154,86 @@ async function defaultWeather() {
 
     }
     else {
+
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${localStorage.city}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
         const res = await fetch(url);
         const data = await res.json();  
-        
-    weatherIcon.classList.add(`owf-${data.weather[0].id}`);
-    temperature.textContent = `${Math.floor(data.main.temp)}°C`;
-    weatherDescription.textContent = data.weather[0].description;
-    wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-    humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`
-} 
+        let error = new Error(res.statusText);
+        if(error.message === "Not Found") { 
+            weatherIcon.className = 'weather-icon owf';
+            temperature.textContent = "";
+            weatherDescription.textContent = "The city name is either empty, or incorrect. Please try again ^_^"
+            wind.textContent = "";
+            humidity.textContent = "";
 
-    
+        }
+        else {
+            weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+            temperature.textContent = `${Math.floor(data.main.temp)}°C`;
+            weatherDescription.textContent = data.weather[0].description;
+            wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
+            humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`
+        }
 }
-
+}
 defaultWeather();
-
 async function getWeather() {  
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
     const res = await fetch(url);
-    const data = await res.json();    
-    
+    const data = await res.json(); 
+    let error = new Error(res.statusText);
+    if(error.message == "Not Found" || city.value.length ==0) {
+        weatherIcon.className = 'weather-icon owf';
+        temperature.textContent = "";
+        weatherDescription.textContent = "The city name is either empty, or incorrect. Please try again ^_^"
+        wind.textContent = "";
+        humidity.textContent = "";
+        
+    }
+   else {
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
     temperature.textContent = `${Math.floor(data.main.temp)}°C`;
     weatherDescription.textContent = data.weather[0].description;
     wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
     humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`;
+   }
   }
-
   city.addEventListener('change', () => {
-    weatherIcon.className = 'weather-icon owf';
-    getWeather()
+        weatherIcon.className = 'weather-icon owf';
+        getWeather();
   });
+
+/* Добавляем цитаты */
+
+function getRandomQuoteIndex() {
+    let randIndex = Math.floor(Math.random() * 1643) + 1;
+    return randIndex;
+}
+let randIndex = getRandomQuoteIndex();
+
+const author = document.querySelector('.author'); 
+const quote = document.querySelector('.quote');
+const quoteBtn = document.querySelector('.change-quote');
+  async function getQuotes() {  
+    const quotes = './js/quotes.json';
+    const res = await fetch(quotes);
+    const data = await res.json(); 
+    author.textContent = data[randIndex].author;
+    quote.textContent = `"${data[randIndex].text}"`;
+     randIndex = getRandomQuoteIndex();
+
+  }
+getQuotes();
+
+quoteBtn.addEventListener('click', () => {
+    author.textContent = "";
+    quote.textContent = "";
+    getQuotes();
+
+});
+
+
+
+
 
 
