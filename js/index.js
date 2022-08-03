@@ -93,7 +93,13 @@ leftBtn.addEventListener('click', () => {
     if (rand < 10) {
         rand = "0"+rand;
     }
-    body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
+    const img = new Image();
+    img.src = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+    img.onload = () => {      
+   body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+
+    }; 
+  //  body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
 
 }
 else {
@@ -101,8 +107,11 @@ else {
     if (rand < 10) {
         rand = "0"+rand;
     }
-    body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
-
+    const img = new Image();
+    img.src = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+    img.onload = () => {      
+        body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+    }; 
 }
 });
 
