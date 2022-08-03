@@ -94,12 +94,11 @@ leftBtn.addEventListener('click', () => {
         rand = "0"+rand;
     }
     const img = new Image();
-    img.src = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
     img.onload = () => {      
-   body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+   body.style.backgroundImage =  `url(${img.src})`;
 
     }; 
-  //  body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
 
 }
 else {
@@ -108,9 +107,9 @@ else {
         rand = "0"+rand;
     }
     const img = new Image();
-    img.src = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
     img.onload = () => {      
-        body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`;
+        body.style.backgroundImage =  `url(${img.src})`;
     }; 
 }
 });
@@ -124,16 +123,23 @@ rightBtn.addEventListener('click', () => {
       if (rand < 10) {
           rand = "0"+rand;
       }
-      body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
-  
+      const img = new Image();
+      img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
+      img.onload = () => {      
+
+        body.style.backgroundImage =  `url(${img.src})`;
+    };   
   }
   else {
       rand++;
       if (rand < 10) {
           rand = "0"+rand;
       }
-      body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg')`
-  
+      const img = new Image();
+      img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
+      img.onload = () => {      
+        body.style.backgroundImage =  `url(${img.src})`;
+    };   
   }
 
 
