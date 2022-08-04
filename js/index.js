@@ -298,12 +298,17 @@ let startAudio = 0;
 const songsList = document.querySelectorAll('.play-item');
 const playingAudio = document.querySelector('marquee');
 playingAudio.textContent = ` `;
-
 const audio = new Audio();
 audio.volume= 0.5;
+let stopTime = 0;
+
 function playAudio() {
+     stopTime = audio.currentTime;
+   // console.log(stopTime)
     if(isPlay == false) {
-      audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
+        audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
+        audio.currentTime = stopTime;
+
         playingAudio.textContent = `${playList[startAudio].title}`;
         songsList.forEach(el => el.classList.remove('item-active'));
         songsList[startAudio].classList.add('item-active');
@@ -314,20 +319,29 @@ function playAudio() {
     }
    else if( isPlay == true) {
     audio.pause();
-   // playingAudio.textContent = ` `;
+    stopTime = audio.currentTime;
     isPlay = false;
+
    }
   }
+
   audio.addEventListener("ended", function () {
     startAudio++;
     if(startAudio > 3) {
         startAudio = 0;
     }
     isPlay = false;
+    
     playAudio();
 });
   
-  playBtn.addEventListener('click', playAudio);
+ playBtn.addEventListener('click', (event) => {
+    if (event.target.classList.contains('play')) {
+        let stopTime = audio.currentTime;
+    }
+    playAudio ()
+
+});
  
 const rightBtnPlayer = document.querySelector('.play-next'); 
 
@@ -339,6 +353,7 @@ rightBtnPlayer.addEventListener('click', () => {
     }
     isPlay = false;
     changePlayBtn();
+    audio.currentTime = 0;
     playAudio();
    
 })
@@ -347,12 +362,12 @@ const leftBtnPlayer = document.querySelector('.play-prev');
 
 leftBtnPlayer.addEventListener('click', () => {
     startAudio--;
-
     if(startAudio < 0) {
         startAudio = 3;
     }
     isPlay = false;
     changePlayBtn();
+    audio.currentTime = 0;
     playAudio();
    
 });
@@ -381,8 +396,6 @@ setInterval(() => {
   }, 500);
 const volumeBtn = document.querySelector('.volume-button');
 const volumeSLider = document.querySelector('.volume-slider-btn');
-
-
 const volumeProgress = document.querySelector('.volume-percentage');
 volumeSLider.addEventListener("click", e => {
 let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
@@ -410,7 +423,7 @@ let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
     if (event.target.classList.contains('unmute')) {
         volumeBtn.classList.remove('unmute');
         volumeBtn.classList.add('mute');
-        volumeBtn.style.backgroundImage = "url('../assets/svg/no-volume.svg')";
+        volumeBtn.style.backgroundImage = "url('./assets/svg/no-volume.svg')";
       //  volumeProgress.style.width = 0 + "%";
         audio.volume = 0;
 
@@ -419,10 +432,25 @@ let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
         
         volumeBtn.classList.remove('mute');
         volumeBtn.classList.add('unmute');
-        volumeBtn.style.backgroundImage = "url('../assets/svg/volume.svg')";
+        volumeBtn.style.backgroundImage = "url('./assets/svg/volume.svg')";
        /* volumeProgress.style.width = rememberVolume * 100 + "%";
         console.log(rememberVolume)
         console.log(rememberVolume * 100 + "%")*/
         audio.volume = rememberVolume;
     }
+   });
+
+   songs.addEventListener('click', (event) => {
+    songsList.forEach(el => el.classList.remove('item-active'));
+    event.target.classList.add('item-active');
+    let platingId = playList.find(el => el.title == event.target.textContent);
+    platingId  = playList.indexOf(platingId);
+    startAudio = platingId;
+
+    //if (event.target == )
+
+    isPlay = false;
+    changePlayBtn();
+    audio.currentTime = 0;
+    playAudio();
    })
