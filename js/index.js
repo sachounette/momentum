@@ -5,13 +5,12 @@ const time = document.querySelector('.time');
 
 function showTime() {
 const date = new Date();
-const currentTime = date.toLocaleTimeString();
+const currentTime = date.toLocaleTimeString('en-US', { hour12: false });
 time.textContent=`${currentTime}`;
 setTimeout(showTime, 1000);
 setTimeout(showDate, 1000);
 setTimeout(getTimeOfDay, 1000);
 setTimeout(bgChange, 1000);
-
 }
   showTime();
 
@@ -141,9 +140,6 @@ rightBtn.addEventListener('click', () => {
         body.style.backgroundImage =  `url(${img.src})`;
     };   
   }
-
-
-
 })
 /*Добавляем виджет погоды*/
 
@@ -155,7 +151,7 @@ const wind = document.querySelector('.wind');
 const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
 async function defaultWeather() {
-    if(localStorage.city == undefined || localStorage.city.length == 0) {
+    if(localStorage.city == undefined) {
         city.value = "Minsk";
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
         const res = await fetch(url);
@@ -175,7 +171,7 @@ async function defaultWeather() {
         const res = await fetch(url);
         const data = await res.json();  
         let error = new Error(res.statusText);
-        if(error.message === "Not Found") { 
+        if(error.message === "Not Found" || localStorage.city.length == 0) { 
             weatherIcon.className = 'weather-icon owf';
             temperature.textContent = "";
             weatherDescription.textContent = "The city name is either empty, or incorrect. Please try again ^_^"
@@ -253,26 +249,28 @@ quoteBtn.addEventListener('click', () => {
 
 const playList = [
     {      
-      title: 'Aqua Caelestis',
-      src: '../assets/sounds/Aqua Caelestis.mp3',
-      duration: '00:58'
+      title: 'Thousand Foot Krutch - War of Change',
+      src: '../assets/sounds/Thousand Foot Krutch - War of Change.mp3',
+      duration: '03:51'
     },  
     {      
-      title: 'River Flows In You',
-      src: '../assets/sounds/River Flows In You.mp3',
-      duration: '03:50'
+      title: 'My Chemical Romance - The Sharpest Lives',
+      src: '../assets/sounds/My Chemical Romance - The Sharpest Lives.mp3',
+      duration: '03:20'
     },
     {      
-        title: 'Summer Wind',
-        src: '../assets/sounds/Summer Wind.mp3',
-        duration: '01:50'
+        title: 'Deuce - I Came to Party ',
+        src: '../assets/sounds/Deuce - I Came to Party.mp3',
+        duration: '03:39'
       },
       {      
-        title: 'Ennio Morricone',
-        src: '../assets/sounds/Ennio Morricone.mp3',
-        duration: '01:37'
+        title: 'Lindemann - Yukon',
+        src: '../assets/sounds/Lindemann - Yukon.mp3',
+        duration: '04:45'
       }
   ]
+  const length = document.querySelector('.length');
+  const current = document.querySelector('.current');
   const songs = document.querySelector('.play-list');
 
   for (let i = 0; i < playList.length; i++) {
@@ -298,20 +296,36 @@ function changePlayBtn() {
 playBtn.addEventListener('click', changePlayBtn);
 let startAudio = 0;
 const songsList = document.querySelectorAll('.play-item');
+const playingAudio = document.querySelector('marquee');
+playingAudio.textContent = ` `;
+
 const audio = new Audio();
+audio.volume= 0.5;
 function playAudio() {
     if(isPlay == false) {
-        audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
-        songsList.forEach(el => el.classList.remove('item-active'))
-       songsList[startAudio].classList.add('item-active');
+      audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
+        playingAudio.textContent = `${playList[startAudio].title}`;
+        songsList.forEach(el => el.classList.remove('item-active'));
+        songsList[startAudio].classList.add('item-active');
+        length.textContent = `${playList[startAudio].duration}`;
         audio.play(); 
         isPlay = true;
+
     }
    else if( isPlay == true) {
     audio.pause();
+   // playingAudio.textContent = ` `;
     isPlay = false;
    }
   }
+  audio.addEventListener("ended", function () {
+    startAudio++;
+    if(startAudio > 3) {
+        startAudio = 0;
+    }
+    isPlay = false;
+    playAudio();
+});
   
   playBtn.addEventListener('click', playAudio);
  
@@ -341,4 +355,74 @@ leftBtnPlayer.addEventListener('click', () => {
     changePlayBtn();
     playAudio();
    
-})
+});
+
+function audioCurrentTime () {
+    let minutes = Math.floor( audio.currentTime / 60 )
+    let timeForSeconds = audio.currentTime - ( minutes * 60 ) // seconds without counted minutes 
+    let seconds = Math.floor( timeForSeconds )
+    let secondsReadable = seconds > 9 ? seconds : `0${seconds}` // To change 2:2 into 2:02
+    current.textContent =  `${minutes}:${secondsReadable}`;
+    setTimeout(audioCurrentTime, 1000);
+}
+audioCurrentTime ();
+const timeline = document.querySelector(".timeline");
+const progressBar = document.querySelector(".progress");
+
+timeline.addEventListener("click", e => {
+ let timelineWidth = window.getComputedStyle(timeline).width;
+const timeToSeek = e.offsetX / parseInt(timelineWidth) *  audio.duration ;
+  audio.currentTime = timeToSeek;
+}, false);
+
+setInterval(() => {
+    progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+   
+  }, 500);
+const volumeBtn = document.querySelector('.volume-button');
+const volumeSLider = document.querySelector('.volume-slider-btn');
+
+
+const volumeProgress = document.querySelector('.volume-percentage');
+volumeSLider.addEventListener("click", e => {
+let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
+   let volumeToSeek =  e.offsetX / parseInt(volumeSLiderWidth);
+   audio.volume = volumeToSeek;
+   volumeProgress.style.width = volumeToSeek * 100 + "%";
+   if (volumeToSeek > 0) {
+    volumeBtn.style.backgroundImage = "url('../assets/svg/volume.svg')";
+
+   }
+   else {
+    volumeBtn.style.backgroundImage = "url('../assets/svg/no-volume.svg')";
+
+   }
+
+   }, false);
+
+
+   volumeBtn.addEventListener('click', (event) => {
+   let targetVolume = window.getComputedStyle(volumeProgress).width;
+   let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
+
+  let rememberVolume = parseInt(targetVolume)/parseInt(volumeSLiderWidth);
+
+    if (event.target.classList.contains('unmute')) {
+        volumeBtn.classList.remove('unmute');
+        volumeBtn.classList.add('mute');
+        volumeBtn.style.backgroundImage = "url('../assets/svg/no-volume.svg')";
+      //  volumeProgress.style.width = 0 + "%";
+        audio.volume = 0;
+
+    }
+    else if (event.target.classList.contains('mute')) {
+        
+        volumeBtn.classList.remove('mute');
+        volumeBtn.classList.add('unmute');
+        volumeBtn.style.backgroundImage = "url('../assets/svg/volume.svg')";
+       /* volumeProgress.style.width = rememberVolume * 100 + "%";
+        console.log(rememberVolume)
+        console.log(rememberVolume * 100 + "%")*/
+        audio.volume = rememberVolume;
+    }
+   })

@@ -266,6 +266,86 @@ body {
 .author {
   min-height: 20px;
 }
+.main-player-controls {
+  width: 150px;
+  height: 80px;
+}
+marquee {
+  height: 20px;
+  width: 190px;
+}
+.player {
+  display: flex; 
+  flex-direction: column;
+}
+.time-audio {
+  display: flex;
+  gap: 5px;
+  width: 86px;
+}
+.timeline {
+  height: 5px;
+  border-radius: 15px;
+  background: white;
+  width: 190px;
+    position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 10px 0 #0008;
+}
+  .progress {
+    background: rgb(255, 166, 0);
+    width: 0%;
+    height: 5px;
+    transition: 0s;
+    transition: 0.2s;
+  }
+  .menu-play {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .audio-time {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .volume-container {
+    cursor: pointer;
+    width: 300px;
+    position: relative;
+  }
+  .volume-button {
+    cursor: pointer;
+    width: 30px;
+  height: 30px;
+  background-size: 30px 30px;
+ background-image: url("../assets/svg/volume.svg");
+  filter: invert(77%) sepia(81%) saturate(1%) hue-rotate(12deg) brightness(95%) contrast(91%);
+  }
+.volume-slider-btn {
+  height: 5px;
+  border-radius: 15px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 40px;
+    height: 5px;
+    background-color: white;
+}
+.volume-percentage {
+  width: 50%;
+  height: 5px;
+  background-color: orange;
+}
+/*.volume-button .unmute {
+   background-image: url("../assets/svg/volume.svg");
+
+}
+.volume-button .mute {
+  background-image: ("../assets/svg/no-volume.svg");
+}*/
 
 @media (max-width: 768px) {
   .time {
