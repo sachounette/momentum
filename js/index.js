@@ -5,14 +5,23 @@ const time = document.querySelector('.time');
 
 function showTime() {
 const date = new Date();
-const currentTime = date.toLocaleTimeString('en-US', { hour12: false });
-time.textContent=`${currentTime}`;
+let currentTime = date.toLocaleTimeString('en-US', { hour12: false });
+if (currentTime.slice(0,2) == "24"){
+    const regex = "24";
+   currentTime =  currentTime.replace(regex, '00');
+    time.textContent= currentTime;
+}
+else {time.textContent= currentTime;
+}
 setTimeout(showTime, 1000);
 setTimeout(showDate, 1000);
 setTimeout(getTimeOfDay, 1000);
 setTimeout(bgChange, 1000);
+
+//setTimeout(getWeather, 1000);
 }
   showTime();
+
 
 /* Добавляем дату на страницу */
 
@@ -43,6 +52,9 @@ const name = document.querySelector('.name');
 function setLocalStorage() {
     localStorage.setItem('name', name.value);
     localStorage.setItem('city', city.value);
+
+   // localStorage.setItem('notes-list', notesList);
+
     }
 
 window.addEventListener('beforeunload', setLocalStorage);
@@ -53,7 +65,17 @@ function getLocalStorage() {
         }
         if(localStorage.getItem('city')) {
             city.value = localStorage.getItem('city');
+
         }
+
+       if(localStorage.getItem('obj')) {
+            let notes = localStorage.getItem('obj');
+            notes = notes.split('').filter(el => el!= ",").join('')
+            let notesList  = document.querySelector('.notes-list');
+            notesList.insertAdjacentHTML('beforeend' , notes)
+
+        }
+
      
         }
 
@@ -249,6 +271,26 @@ quoteBtn.addEventListener('click', () => {
 
 const playList = [
     {      
+        title: 'Röyksopp - Running To The Sea',
+        src: '../assets/sounds/Röyksopp - Running To The Sea.mp3',
+        duration: '04:54'
+      },  
+      {      
+        title: 'Ashes Remain - On My Own',
+        src: '../assets/sounds/Ashes Remain - On My Own.mp3',
+        duration: '02:53'
+      },  
+      {      
+        title: 'Paramore - Let The Flames Begin',
+        src: '../assets/sounds/Paramore - Let The Flames Begin.mp3',
+        duration: '03:18'
+      },  
+      {      
+        title: 'The Offspring - Your Gonna Go Far Kid',
+        src: '../assets/sounds/The Offspring - Your Gonna Go Far Kid.mp3',
+        duration: '02:57'
+      },  
+    {      
       title: 'Thousand Foot Krutch - War of Change',
       src: '../assets/sounds/Thousand Foot Krutch - War of Change.mp3',
       duration: '03:51'
@@ -326,19 +368,18 @@ function playAudio() {
   }
 
   audio.addEventListener("ended", function () {
+
     startAudio++;
-    if(startAudio > 3) {
+    if(startAudio > playList.length-1 ) {
         startAudio = 0;
     }
     isPlay = false;
-    
+    audio.currentTime = 0;
     playAudio();
 });
   
  playBtn.addEventListener('click', (event) => {
-    if (event.target.classList.contains('play')) {
-        let stopTime = audio.currentTime;
-    }
+  
     playAudio ()
 
 });
@@ -348,7 +389,7 @@ const rightBtnPlayer = document.querySelector('.play-next');
 rightBtnPlayer.addEventListener('click', () => {
     startAudio++;
 
-    if(startAudio > 3) {
+    if(startAudio > playList.length-1) {
         startAudio = 0;
     }
     isPlay = false;
@@ -359,11 +400,10 @@ rightBtnPlayer.addEventListener('click', () => {
 })
 
 const leftBtnPlayer = document.querySelector('.play-prev'); 
-
 leftBtnPlayer.addEventListener('click', () => {
     startAudio--;
     if(startAudio < 0) {
-        startAudio = 3;
+        startAudio = playList.length-1 ;
     }
     isPlay = false;
     changePlayBtn();
@@ -381,76 +421,204 @@ function audioCurrentTime () {
     setTimeout(audioCurrentTime, 1000);
 }
 audioCurrentTime ();
-const timeline = document.querySelector(".timeline");
-const progressBar = document.querySelector(".progress");
+const timeline = document.querySelector(".audio-timeline");
 
-timeline.addEventListener("click", e => {
- let timelineWidth = window.getComputedStyle(timeline).width;
-const timeToSeek = e.offsetX / parseInt(timelineWidth) *  audio.duration ;
-  audio.currentTime = timeToSeek;
+timeline.addEventListener("click", (e) => {
+volumeSLiderWidth = window.getComputedStyle(timeline).width;
+let  timelinedIS =  e.offsetX / parseInt(volumeSLiderWidth);
+ audio.currentTime = (audio.duration * timelinedIS);
 }, false);
 
 setInterval(() => {
-    progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-   
+    timeline.value = audio.currentTime/audio.duration*100
   }, 500);
+
+
 const volumeBtn = document.querySelector('.volume-button');
-const volumeSLider = document.querySelector('.volume-slider-btn');
-const volumeProgress = document.querySelector('.volume-percentage');
+const volumeSLider = document.querySelector('.volumeBar');
+
+
 volumeSLider.addEventListener("click", e => {
 let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
    let volumeToSeek =  e.offsetX / parseInt(volumeSLiderWidth);
    audio.volume = volumeToSeek;
-   volumeProgress.style.width = volumeToSeek * 100 + "%";
-   if (volumeToSeek > 0) {
+
+if (volumeToSeek > 0) {
     volumeBtn.style.backgroundImage = "url('../assets/svg/volume.svg')";
 
    }
-   else {
+   else if (volumeToSeek < 0 ){
     volumeBtn.style.backgroundImage = "url('../assets/svg/no-volume.svg')";
 
    }
 
    }, false);
 
-
-   volumeBtn.addEventListener('click', (event) => {
-   let targetVolume = window.getComputedStyle(volumeProgress).width;
-   let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
-
-  let rememberVolume = parseInt(targetVolume)/parseInt(volumeSLiderWidth);
-
-    if (event.target.classList.contains('unmute')) {
+function rememberVOlume () {
+    let remember = audio.volume;
+    audio.volume = remember;
+}
+ volumeBtn.addEventListener('click', (event) => {
+ 
+   if (event.target.classList.contains('unmute')) {
         volumeBtn.classList.remove('unmute');
         volumeBtn.classList.add('mute');
         volumeBtn.style.backgroundImage = "url('./assets/svg/no-volume.svg')";
-      //  volumeProgress.style.width = 0 + "%";
         audio.volume = 0;
 
     }
     else if (event.target.classList.contains('mute')) {
-        
         volumeBtn.classList.remove('mute');
         volumeBtn.classList.add('unmute');
         volumeBtn.style.backgroundImage = "url('./assets/svg/volume.svg')";
-       /* volumeProgress.style.width = rememberVolume * 100 + "%";
-        console.log(rememberVolume)
-        console.log(rememberVolume * 100 + "%")*/
-        audio.volume = rememberVolume;
+        let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
+       volumeToSeek = (volumeSLider.value/100 * parseInt(volumeSLiderWidth));
+       volumeToSeek = volumeToSeek/parseInt(volumeSLiderWidth);
+   audio.volume = volumeToSeek;
+
     }
    });
-
-   songs.addEventListener('click', (event) => {
+   
+    songs.addEventListener('click', (event) => {
     songsList.forEach(el => el.classList.remove('item-active'));
     event.target.classList.add('item-active');
     let platingId = playList.find(el => el.title == event.target.textContent);
     platingId  = playList.indexOf(platingId);
     startAudio = platingId;
-
     //if (event.target == )
-
     isPlay = false;
     changePlayBtn();
     audio.currentTime = 0;
     playAudio();
    })
+
+
+   /* заметочки */
+
+
+   const noteInput = document.querySelector('.note-input');
+   const notesList = document.querySelector('.notes-list');
+   let notesArray = [];
+   noteInput.addEventListener('keydown', (event) => {
+    const notes = document.querySelectorAll('.in-process');
+    if (event.keyCode === 13) {
+      //  const notes = document.querySelectorAll('.in-process');
+        let b = '';
+        notes.forEach(el => {if (el.classList.contains('editing')) {b = 'not-do' }});
+       if(b == 'not-do'){
+       noteInput.value = "";
+       notes.forEach(el => {  el.classList.remove('editing')});
+       
+       }
+      //console.log(val)
+        else if (noteInput.value == '' || noteInput.value.trim() == '') {}
+        
+        else {
+        
+       let note = document.createElement("li");
+       let boxNote = document.createElement("input");
+       let noteText = document.createElement("p");
+       let close = document.createElement('div');
+       let edit = document.createElement('div');
+       close.classList.add('close');
+       edit.classList.add('edit');
+       noteText.classList.add('note-text');
+       boxNote.classList.add('not-checked');
+       boxNote.type = "checkbox";
+       note.classList.add('in-process');
+       notesList.appendChild(note);
+       note.appendChild(boxNote);
+       noteText.textContent = noteInput.value;
+       note.appendChild(noteText);
+       note.appendChild(close);
+       note.appendChild(edit);
+       noteInput.value = '';
+       notesArray.push(note.outerHTML);
+
+        }   
+
+/*let not = localStorage.getItem('obj');
+console.log(not)
+let json = not + notesArray;
+localStorage.setItem('obj', json);*/
+listStatus();
+
+    }   
+   })
+
+function listStatus(){
+    const kids = document.querySelectorAll('.in-process');
+    let arr = [];
+    kids.forEach(el => arr.push(el.outerHTML));
+    let json = arr;
+    localStorage.setItem('obj', json);
+    //console.log(obj)
+}
+
+   notesList.addEventListener('click', (event) => {
+    if(event.target.classList.contains('close')){
+        let newValue = event.target.closest('li');
+        newValue.remove();
+        listStatus();
+    }
+   }) 
+   notesList.addEventListener('click', (event) => {
+    if(event.target.classList.contains('not-checked')){
+
+        if (event.target.checked) {
+            event.target.setAttribute("checked", "checked");
+
+            let newValue = event.target.closest('li').querySelector('.note-text');
+            newValue.style.textDecoration = "line-through";
+            newValue.style.opacity = "0.5";
+        }
+        else {
+            event.target.removeAttribute("checked", "checked");
+            let newValue = event.target.closest('li').querySelector('.note-text');
+            newValue.style.textDecoration = "none";
+            newValue.style.opacity = "1";
+        }
+        listStatus();
+
+    }
+   }) 
+   const deleteNotes = document.querySelector('.delete-notes');
+   deleteNotes.addEventListener('click', () => {
+    const listNotes = document.querySelectorAll('.in-process');
+    listNotes.forEach(el => el.remove());
+ 
+    listStatus();
+
+
+   }
+)
+const toDo = document.querySelector('.to-do-list');
+const notesContainer = document.querySelector('.notes-content');
+toDo.addEventListener('click', () => {
+    notesContainer.classList.toggle('notes-shown')  //.notes-shown
+})
+
+
+const edit = document.querySelector('.edit');
+
+notesList.addEventListener('click', (event) => {
+
+    if(event.target.classList.contains('edit')){
+        const list = document.querySelectorAll('.in-process');
+        list.forEach(el => el.classList.remove('editing'))
+        let newValue = event.target.closest('li').querySelector('.note-text').textContent;
+        let myLi = event.target.closest('li');
+        event.target.closest('li').classList.add('editing');
+        noteInput.value = event.target.closest('li').querySelector('.note-text').textContent;
+        
+
+        noteInput.addEventListener('input', () => {
+            if (myLi.classList.contains('editing')) {
+                myLi.querySelector('.note-text').textContent = noteInput.value;
+            }
+        })
+        
+    }     
+    }) 
+
+

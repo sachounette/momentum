@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="assets/favicon.ico" rel="shortcut icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/owfont-regular.css" />
   <link rel="stylesheet" href="css/style.css" />
   <title>momentum</title>
@@ -24,20 +27,16 @@
 
           <div class="volume-container">
             <div class="volume-button unmute">
-              <div class="volume icono-volumeMedium"></div>
             </div>
             
-            <div class="volume-slider-btn">
-              <div class="volume-percentage"></div>
-            </div>
+           
+              <input type="range" class = "volumeBar" name="volumeBar" />
+            
           </div>
         </div>
-            <div class="timeline">
-              <div class="progress"></div>
-            </div>
+        <input type="range" class = "audio-timeline" name="timeline"/>
         </div>
         </div>
-      
       <div class="player-controls">
         <button class="play-prev player-icon"></button>
         <button class="play player-icon"></button>
@@ -72,10 +71,32 @@
     </div>
   </main>
   <footer class="footer">
+    <div class="settings">
+      <p class = "app-settings">Settings</p>
+    </div>
+    <div class="quotes">
     <button class="change-quote"></button>
     <div>
       <div class="quote"></div>
       <div class="author"></div>
+    </div>
+  </div>
+    <div class="to-do">
+      <p class = "to-do-list">To do</p>
+      <div class = "notes-content">
+        <div class="header-notes">
+         <p>Any tasks? :) </p>
+         <p class = "delete-notes">Delete All</p>
+      </div>
+      <div class="notes-body">
+        <ul class = notes-list></ul>
+
+      </div>
+      <div class="notes-footer">
+        <input type = text placeholder="New task" class = "note-input">
+      </div>
+</div>
+</div>
     </div>
   </footer>
   <script src="./js/index.js"></script>
