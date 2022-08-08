@@ -1,4 +1,4 @@
-//@import quotes;
+import i18Obj from './translate.js'
 
 /* Добавляем время на страницу*/
 const time = document.querySelector('.time');
@@ -16,7 +16,6 @@ else {time.textContent= currentTime;
 setTimeout(showTime, 1000);
 setTimeout(showDate, 1000);
 setTimeout(getTimeOfDay, 1000);
-setTimeout(bgChange, 1000);
 
 //setTimeout(getWeather, 1000);
 }
@@ -27,34 +26,41 @@ setTimeout(bgChange, 1000);
 
 const currentDate = document.querySelector('.date');
 
-function showDate() {
+function showDate(myLang) {
+    myLang = defineLang();
     const date = new Date();
     const options = {weekday: 'long', month: 'long', day: 'numeric'};
-    const dateInfo = date.toLocaleDateString('en-US', options);
+    const dateInfo = date.toLocaleDateString(myLang, options);
     currentDate.textContent=`${dateInfo}`;
     }
 
 /* Добавляем приветствие + Local Storage для хранения приветствия*/
 const greeting = document.querySelector('.greeting');
 
+     function getTimeOfDay(myLang) {
+     myLang = defineLang();
+     let daypart = dayPart();
+     greeting.textContent = `Good ${daypart}`; 
+     let smth = greeting.textContent;
+     smth = i18Obj[myLang][greeting.textContent];
+    greeting.textContent = smth;
+    return greeting;
 
-     function getTimeOfDay() {
-     const date = new Date();
-     const timeOfTheDay = ['night', 'morning', 'afternoon', 'evening'];
-     const hours = date.getHours();
-     let daytime =  Math.floor(hours/6);
-     let daypart = timeOfTheDay[daytime];
-     greeting.textContent = `Good ${timeOfTheDay[daytime]} `; 
-     return daypart;
 }
+function dayPart(){
+    const date = new Date();
+    const timeOfTheDay = ['night', 'morning', 'afternoon', 'evening'];
+    const hours = date.getHours();
+    let daytime =  Math.floor(hours/6);
+    let daypart = timeOfTheDay[daytime];
+    return daypart;
+}
+
 const name = document.querySelector('.name');
 
 function setLocalStorage() {
     localStorage.setItem('name', name.value);
     localStorage.setItem('city', city.value);
-
-   // localStorage.setItem('notes-list', notesList);
-
     }
 
 window.addEventListener('beforeunload', setLocalStorage);
@@ -70,12 +76,31 @@ function getLocalStorage() {
 
        if(localStorage.getItem('obj')) {
             let notes = localStorage.getItem('obj');
-            notes = notes.split('').filter(el => el!= ",").join('')
+            notes = notes.split('').filter(el => el!= ",").join('');
             let notesList  = document.querySelector('.notes-list');
             notesList.insertAdjacentHTML('beforeend' , notes)
 
         }
+  /*    if(localStorage.getItem('settings')) {
+            let notes = localStorage.getItem('settings');
+            notes = notes.split('').filter(el => el!= ",").join('');
+console.log(notes)
+            let notesList  = document.querySelector('.elem-container');
+            notesList.innerHTML='';
+            notesList.insertAdjacentHTML('beforeend' , notes)
 
+        }
+        */
+    /* let settingsElemList  = document.querySelector('.elem-container');
+       settingsElemList.innerHTML = '';
+
+     if(localStorage.getItem('settings')) {
+          let notes = localStorage.getItem('settings');
+            notes = notes.split('').filter(el => el!= ",").join('');
+                     settingsElemList.insertAdjacentHTML('beforeend' , notes);
+
+
+        }*/
      
         }
 
@@ -100,7 +125,8 @@ function bgChange(){
     let daytime =  Math.floor(hours/6);
     let number = rand;
     body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfTheDay[daytime]}/${number}.jpg')`;
-  
+   // setTimeout(bgChange, 1000);
+
 }
 bgChange();
 
@@ -108,7 +134,9 @@ const leftBtn = document.querySelector('.slide-prev');
 const rightBtn = document.querySelector('.slide-next');
 
 leftBtn.addEventListener('click', () => {
-  let daypart = getTimeOfDay();
+   
+if(body.classList.contains('github-bg')) {
+  let daypart = dayPart();
   if (rand == 1) {
     rand = 20;
     if (rand < 10) {
@@ -119,7 +147,7 @@ leftBtn.addEventListener('click', () => {
     img.onload = () => {      
    body.style.backgroundImage =  `url(${img.src})`;
 
-    }; 
+  }; 
 
 }
 else {
@@ -132,13 +160,21 @@ else {
     img.onload = () => {      
         body.style.backgroundImage =  `url(${img.src})`;
     }; 
+}}
+else if(body.classList.contains('flickr-bg')) {
+    getFlickrBg();
+
+}
+else if(body.classList.contains('unsplash-bg')) {
+    getUnsplashBg();
+
 }
 });
 
 
 rightBtn.addEventListener('click', () => {
-
-    let daypart = getTimeOfDay();
+    if(body.classList.contains('github-bg')) {
+    let daypart = dayPart();
     if (rand == 20) {
       rand = 1;
       if (rand < 10) {
@@ -161,7 +197,15 @@ rightBtn.addEventListener('click', () => {
       img.onload = () => {      
         body.style.backgroundImage =  `url(${img.src})`;
     };   
-  }
+  }}
+  else if(body.classList.contains('flickr-bg')) {
+    getFlickrBg();
+
+}
+else if(body.classList.contains('unsplash-bg')) {
+    getUnsplashBg();
+
+}
 })
 /*Добавляем виджет погоды*/
 
@@ -172,31 +216,39 @@ const weatherDescription = document.querySelector('.weather-description');
 const wind = document.querySelector('.wind');
 const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
-async function defaultWeather() {
+async function defaultWeather(myLang) {
+    myLang = defineLang();
+
     if(localStorage.city == undefined) {
         city.value = "Minsk";
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
+        if(myLang == "ru") {
+            city.value = "Минск";
+        }
+       
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${myLang}&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
         const res = await fetch(url);
         const data = await res.json();  
         
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
     temperature.textContent = `${Math.floor(data.main.temp)}°C`;
     weatherDescription.textContent = data.weather[0].description;
-    wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-    humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`
+    
+    wind.textContent = `${i18Obj[myLang]["Wind speed:"]} ${Math.floor(data.wind.speed)} ${i18Obj[myLang]["m/s"]}`;
+    humidity.textContent = `${i18Obj[myLang]["Humidity:"]}: ${Math.floor(data.main.humidity)} %`;
 
 
     }
     else {
-
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${localStorage.city}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
+       
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${localStorage.city}&lang=${myLang}&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
         const res = await fetch(url);
         const data = await res.json();  
         let error = new Error(res.statusText);
         if(error.message === "Not Found" || localStorage.city.length == 0) { 
+            weatherDescription.textContent = "";
             weatherIcon.className = 'weather-icon owf';
             temperature.textContent = "";
-            weatherDescription.textContent = "The city name is either empty, or incorrect. Please try again ^_^"
+            weatherDescription.textContent = i18Obj[myLang][weatherDescription.dataset.i18];
             wind.textContent = "";
             humidity.textContent = "";
 
@@ -205,36 +257,43 @@ async function defaultWeather() {
             weatherIcon.classList.add(`owf-${data.weather[0].id}`);
             temperature.textContent = `${Math.floor(data.main.temp)}°C`;
             weatherDescription.textContent = data.weather[0].description;
-            wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-            humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`
+            wind.textContent = `${i18Obj[myLang]["Wind speed:"]} ${Math.floor(data.wind.speed)} ${i18Obj[myLang]["m/s"]}`;
+            humidity.textContent = `${i18Obj[myLang]["Humidity:"]}: ${Math.floor(data.main.humidity)} %`;
         }
 }
 }
 defaultWeather();
-async function getWeather() {  
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
+async function getWeather(myLang) {  
+    myLang = defineLang();
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${myLang}&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
     const res = await fetch(url);
     const data = await res.json(); 
     let error = new Error(res.statusText);
     if(error.message == "Not Found" || city.value.length ==0) {
         weatherIcon.className = 'weather-icon owf';
         temperature.textContent = "";
-        weatherDescription.textContent = "The city name is either empty, or incorrect. Please try again ^_^"
+        weatherDescription.textContent = "";
+        weatherDescription.textContent = i18Obj[myLang][weatherDescription.dataset.i18];
         wind.textContent = "";
         humidity.textContent = "";
         
     }
    else {
+    weatherDescription.textContent = "";
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
     temperature.textContent = `${Math.floor(data.main.temp)}°C`;
     weatherDescription.textContent = data.weather[0].description;
-    wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-    humidity.textContent = `Humidity: ${Math.floor(data.main.humidity)} %`;
-   }
+    wind.textContent = `${i18Obj[myLang]["Wind speed:"]} ${Math.floor(data.wind.speed)} ${i18Obj[myLang]["m/s"]}`;
+    humidity.textContent = `${i18Obj[myLang]["Humidity:"]}: ${Math.floor(data.main.humidity)} %`;
+}
   }
   city.addEventListener('change', () => {
         weatherIcon.className = 'weather-icon owf';
+        let myLang = defineLang();
         getWeather();
+     
+    
   });
 
 /* Добавляем цитаты */
@@ -248,13 +307,27 @@ let randIndex = getRandomQuoteIndex();
 const author = document.querySelector('.author'); 
 const quote = document.querySelector('.quote');
 const quoteBtn = document.querySelector('.change-quote');
-  async function getQuotes() {  
-    const quotes = './js/quotes.json';
-    const res = await fetch(quotes);
-    const data = await res.json(); 
-    author.textContent = data[randIndex].author;
-    quote.textContent = `"${data[randIndex].text}"`;
-     randIndex = getRandomQuoteIndex();
+ 
+async function getQuotes() {  
+    if(quote.classList.contains('in-rus')) {
+        let quotes = './js/rus-quotes.json';
+        const res = await fetch(quotes);
+        const data = await res.json(); 
+        randIndex = Math.floor(Math.random() * 19) + 1;
+        author.textContent = data[randIndex].author;
+        quote.textContent = `"${data[randIndex].text}"`;
+        
+    }
+    else {
+        let quotes = './js/quotes.json';
+        const res = await fetch(quotes);
+        const data = await res.json(); 
+    
+        author.textContent = data[randIndex].author;
+        quote.textContent = `"${data[randIndex].text}"`;
+         randIndex = getRandomQuoteIndex();
+    };
+    //const quotesRussian = './js/rus-quotes.json';
 
   }
 getQuotes();
@@ -422,9 +495,8 @@ function audioCurrentTime () {
 }
 audioCurrentTime ();
 const timeline = document.querySelector(".audio-timeline");
-
 timeline.addEventListener("click", (e) => {
-volumeSLiderWidth = window.getComputedStyle(timeline).width;
+let volumeSLiderWidth = window.getComputedStyle(timeline).width;
 let  timelinedIS =  e.offsetX / parseInt(volumeSLiderWidth);
  audio.currentTime = (audio.duration * timelinedIS);
 }, false);
@@ -620,5 +692,218 @@ notesList.addEventListener('click', (event) => {
         
     }     
     }) 
+
+/* POPUP*/
+
+
+const popupLink = document.querySelector('.popup-link');
+const popup = document.querySelector('.popup');
+popupLink.addEventListener('click', (e)=> {
+    popup.classList.add('open');
+    e.preventDefault();
+})
+
+const popupClose = document.querySelector('.close-popup');
+popupClose.addEventListener('click', (e)=> {
+    popup.classList.remove('open');
+    e.preventDefault();
+})
+
+/* НАСТРОЙКИ */
+
+const hideElemSettings = document.querySelectorAll('.hide-elem-item');
+const inputAudio = document.getElementById('Player');
+const playerContainer = document.querySelector('.player');
+
+
+function turnCheckBoxSettings () {
+    if (event.target.checked) {
+        event.target.setAttribute("checked", "checked");
+        let newValue = event.target.closest('input').name;
+        let targetElement = document.querySelector(`.${newValue}`)
+        targetElement.classList.remove('hidden-item');
+
+    }
+    else if (!event.target.checked) {
+        event.target.removeAttribute("checked", "checked");
+        let newValue = event.target.closest('input').name;
+        let targetElement = document.querySelector(`.${newValue}`)
+        targetElement.classList.add('hidden-item');
+    }
+
+}
+
+hideElemSettings.forEach(el => 
+    el.addEventListener('click', (event) => {
+    turnCheckBoxSettings();
+
+}));
+
+
+const bgSettings = document.querySelectorAll('.chBckgr');
+const tag = document.getElementById('tag');
+
+tag.addEventListener('keydown', (event) => {
+    const currentImagePaths = document.querySelectorAll('.chBckgr');
+    let requiredInput;
+    currentImagePaths.forEach(el => {if(el.checked){
+       requiredInput = el.value;
+    }});
+   if(event.keyCode === 13) {
+        if(requiredInput == 'Github') {
+        
+        }
+        else if(requiredInput == 'Unsplash') {
+        getUnsplashBg()
+    }
+    else if(requiredInput == 'Flickr') {
+        getFlickrBg()
+    
+    }}
+}) 
+
+async function getUnsplashBg(){
+   //XpU3hGUpmo6TDh24C_HzOzDwwJkDhsXYrpj4iL949L4 -> api key
+   
+  const url = `https://api.unsplash.com/photos/random?query=${tag.value}&client_id=XpU3hGUpmo6TDh24C_HzOzDwwJkDhsXYrpj4iL949L4`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const img = new Image();
+    img.src = `${data.urls.regular}`;
+    img.onload = () => {      
+   body.style.background =  `url(${img.src})`;
+   body.style.backgroundColor =  'rgba(0,0,0,0.5)';
+   body.style.backgroundSize =  'cover';
+
+
+    }   
+}
+
+async function getFlickrBg(){
+   //78b2145e41dac193d202c2c3628bee1c -> api key
+   let rand = Math.floor(Math.random() * 99) + 1;
+
+    const url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=78b2145e41dac193d202c2c3628bee1c&tags=${tag.value}&extras=url_l&format=json&nojsoncallback=1`;
+     const res = await fetch(url);
+     const data = await res.json();
+
+  const img = new Image();
+    img.src = `${data.photos.photo[rand].url_l}`;
+    img.onload = () => {      
+   body.style.background =  `url(${img.src})`;
+   body.style.backgroundColor =  'rgba(0,0,0,0.5)';
+   body.style.backgroundSize =  'cover';
+
+    }
+    
+ }
+
+
+
+function BgChoose () {
+    if (event.target.checked) {
+        if(event.target.value == 'Github'){
+          //  body.style.background = 'none';
+            body.classList.add('github-bg');
+            body.style.backgroundColor =  'rgba(0,0,0,0.5)';
+
+            body.classList.remove('flickr-bg');
+            body.classList.remove('unsplash-bg');
+            bgChange();
+        }
+        else if (event.target.value == 'Flickr'){
+          //  body.style.background = 'none';
+            body.classList.remove('github-bg');
+            body.classList.remove('unsplash-bg');
+            body.classList.add('flickr-bg');
+            getFlickrBg();
+
+        }
+        else if (event.target.value == 'Unsplash'){
+           // body.style.background = 'none';
+            body.classList.remove('github-bg');
+            body.classList.remove('flickr-bg');
+            body.classList.add('unsplash-bg');
+            getUnsplashBg();
+        }
+    }
+}
+bgSettings.forEach(el => 
+    el.addEventListener('click', (event) => {
+        BgChoose();
+       
+
+}));
+
+
+
+/*function detectLang() {
+
+    let daytime = getTimeOfDay();
+      console.log(greeting.dataset.id);
+    console.log(i18Obj.ru[greeting.dataset.id])
+
+}
+
+detectLang()*/
+
+//const languages = document.querySelectorAll('.lang');
+const rulang = document.getElementById('Rus');
+const enlang = document.getElementById('English');
+
+
+function getTranslate (languages) {
+  const dictionary = document.querySelectorAll('[data-i18]');
+  dictionary.forEach((el) => {
+    el.textContent = i18Obj[languages][el.dataset.i18];
+  });
+
+
+  const placeholders = document.querySelectorAll('[data-placeholder]');
+  placeholders.forEach((el) => {
+  let attr =   el.getAttribute("placeholder");
+  el.placeholder = i18Obj[languages][el.dataset.placeholder];
+
+   // el.textContent = i18Obj[languages][el.dataset.i18];
+  });
+
+
+}
+rulang.addEventListener('click', () => {
+    getWeather()
+
+    getTranslate('ru');
+    quote.classList.remove('in-eng');
+    quote.classList.add('in-rus');
+    getQuotes();
+    defineLang() ;getWeather()
+
+
+});
+
+enlang.addEventListener('click', () => {
+
+getTranslate('en')
+quote.classList.remove('in-rus');
+getQuotes();
+defineLang() ;getWeather()
+
+});
+
+
+function defineLang() {
+    const langs = document.querySelectorAll('.lang');
+    let cussrentLang;
+    langs.forEach(el => el.checked?  cussrentLang = el : false);
+  let myLang = cussrentLang.value;
+    return myLang;
+}
+
+
+
+
+
+
+
 
 

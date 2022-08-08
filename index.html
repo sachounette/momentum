@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <title>momentum</title>
 </head>
-<body>
+<body class = "github-bg">
   <header class="header">
     <div class="player">
       <div class="main-player-controls">
@@ -45,13 +45,13 @@
       <ul class="play-list"></ul>
     </div>
     <div class="weather">
-      <input type="text" class="city" placeholder="Enter city"/>
+      <input type="text" class="city" placeholder="Enter city"  data-placeholder = "Enter city"/>
       <i class="weather-icon owf"></i>
       <div class="weather-error"></div>
       <div class="description-container">
         <span class="temperature"></span>
-        <span class="weather-description"></span>
-        <span class="wind"></span>
+        <span class="weather-description" data-i18="weather-dscr"></span>
+        <span class="wind" ></span>
         <span class="humidity"></span>
       </div>
       <div class="wind"></div>
@@ -66,13 +66,13 @@
     <time class="time"></time>
     <date class="date"></date>
     <div class="greeting-container">
-      <span class="greeting"></span>
-      <input type="text" class="name" placeholder="Enter your name :)" maxlength="30" />
+      <span class="greeting" data-i18="greeting"></span>
+      <input type="text" class="name" placeholder="Enter your name :)" data-placeholder = "Enter your name :)" maxlength="30" />
     </div>
   </main>
   <footer class="footer">
     <div class="settings">
-      <p class = "app-settings">Settings</p>
+      <a href="#popup" data-i18 ="Settings" class = "app-settings popup-link">Settings</a>
     </div>
     <div class="quotes">
     <button class="change-quote"></button>
@@ -82,23 +82,95 @@
     </div>
   </div>
     <div class="to-do">
-      <p class = "to-do-list">To do</p>
+      <p class = "to-do-list" data-i18 ="To do">To do</p>
       <div class = "notes-content">
         <div class="header-notes">
-         <p>Any tasks? :) </p>
-         <p class = "delete-notes">Delete All</p>
+         <p data-i18 ="any-tasks">Any tasks? :)</p>
+         <p class = "delete-notes" data-i18 ="delete-tasks">Delete All</p>
       </div>
       <div class="notes-body">
         <ul class = notes-list></ul>
 
       </div>
       <div class="notes-footer">
-        <input type = text placeholder="New task" class = "note-input">
+        <input type = text placeholder="New task" data-placeholder="task" class = "note-input">
       </div>
 </div>
 </div>
     </div>
+    
   </footer>
-  <script src="./js/index.js"></script>
+  <div id = "popup" class="popup">
+    <div class="popup__body">
+      <div class="popup__content">
+        <a href="" class="popup__close close-popup">X</a>
+        <div class="popup__text">
+          <div class="hide-elements">
+            <h3 class = "settings-name" data-i18 = "Hide Elements">Hide Elements</h3>
+            <div class = "elem-container">
+            <input type="checkbox" id="time" class =  "hide-elem-item to-save" name="time" checked>
+            <label for="time" class="to-save"  data-i18 = "time">Time</label>
+
+            <input type="checkbox" id="date" class =  "hide-elem-item to-save"  name="date" checked>
+            <label for="date" class="to-save" data-i18 = "date">Date</label>
+
+            <input type="checkbox" id="Greeting" class =  "hide-elem-item to-save" name="greeting-container"  checked>
+            <label for="Greeting" class="to-save" data-i18 = "greeting">Greeting</label>
+
+
+            <input type="checkbox" id="Quotes" class =  "hide-elem-item to-save" name="quotes" checked>
+            <label for="Quotes" class="to-save" data-i18 = "quotes">Quotes</label>
+
+
+            <input type="checkbox" id="Weather" class =  "hide-elem-item to-save"  name="weather" checked>
+            <label for="Weather" class="to-save" data-i18 = "weather"  >Weather</label>
+
+
+            <input type="checkbox" id="Player" class =  "hide-elem-item to-save"  name="player"  checked>
+            <label for="Player" class="to-save" data-i18 = "player">Audio Player</label>
+
+
+            <input type="checkbox" id="to-do" class =  "hide-elem-item to-save" name="to-do"  checked>
+            <label for="to-do" class="to-save" data-i18 = "To do">To do</label>
+          
+          </div>
+        </div>
+          <div class="change-bg">
+
+            <h3 class = "settings-name" data-i18 = "Background">Change Background </h3>
+            <div class = "elem-container">
+
+              <input type="radio" class = "chBckgr" id="Github" name="chBckgr" value="Github"
+             checked>
+             <label for="Github" data-i18 = "Github">Github collection</label>
+             
+             <input type="radio" class = "chBckgr" id="Flickr" name="chBckgr" value="Flickr"> <label for="Flickr">Flickr</label>
+
+
+      <input type="radio" class = "chBckgr" id="Unsplash" name="chBckgr" value="Unsplash"> <label for="Unsplash">Unsplash</label>
+            </div>
+            <div>
+              <label for="tag" data-i18 = "choosePic">Choose your Flickr and Unsplash tag: </label>
+              <input type="text" id="tag" name="tag" value="flowers"
+                     placeholder="Enter a tag" data-placeholder = "Enter a tag">
+            </div>
+
+          </div>
+          <div class="change-lng">
+            <h3 class = "settings-name" data-i18 = "chooseLng">Choose Language</h3>
+            <div class = "elem-container">
+              <input type="radio" id="English" class = "lang" name="lang" value="en"
+              checked>
+              <label for="English">English</label>
+              
+              <input type="radio" id="Rus" class = "lang" name="lang" value="ru"> <label for="Rus">Русский</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module"  src="./js/index.js"></script>
 </body>
 </html>
