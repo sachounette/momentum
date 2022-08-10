@@ -1,5 +1,5 @@
 import i18Obj from './translate.js'
-
+window.addEventListener('load', getLocalStorage);
 /* Добавляем время на страницу*/
 const time = document.querySelector('.time');
 
@@ -12,11 +12,11 @@ if (currentTime.slice(0,2) == "24"){
     time.textContent= currentTime;
 }
 else {time.textContent= currentTime;
+    
 }
 setTimeout(showTime, 1000);
 setTimeout(showDate, 1000);
 setTimeout(getTimeOfDay, 1000);
-
 //setTimeout(getWeather, 1000);
 }
   showTime();
@@ -81,19 +81,9 @@ function getLocalStorage() {
             notesList.insertAdjacentHTML('beforeend' , notes)
 
         }
-  /*    if(localStorage.getItem('settings')) {
-            let notes = localStorage.getItem('settings');
-            notes = notes.split('').filter(el => el!= ",").join('');
-console.log(notes)
-            let notesList  = document.querySelector('.elem-container');
-            notesList.innerHTML='';
-            notesList.insertAdjacentHTML('beforeend' , notes)
-
-        }
-        */
-    /* let settingsElemList  = document.querySelector('.elem-container');
-       settingsElemList.innerHTML = '';
-
+     let settingsElemList  = document.querySelector('.popup__text');
+    //   settingsElemList.innerHTML = '';
+/*console.log(localStorage.getItem('settings'))
      if(localStorage.getItem('settings')) {
           let notes = localStorage.getItem('settings');
             notes = notes.split('').filter(el => el!= ",").join('');
@@ -104,7 +94,6 @@ console.log(notes)
      
         }
 
-window.addEventListener('load', getLocalStorage);
 
 /* Делаем слайдер изображений активным */
 
@@ -245,7 +234,6 @@ async function defaultWeather(myLang) {
         const data = await res.json();  
         let error = new Error(res.statusText);
         if(error.message === "Not Found" || localStorage.city.length == 0) { 
-            weatherDescription.textContent = "";
             weatherIcon.className = 'weather-icon owf';
             temperature.textContent = "";
             weatherDescription.textContent = i18Obj[myLang][weatherDescription.dataset.i18];
@@ -265,12 +253,12 @@ async function defaultWeather(myLang) {
 defaultWeather();
 async function getWeather(myLang) {  
     myLang = defineLang();
-
+    weatherDescription.textContent = "";
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${myLang}&appid=0a550266da79451fc790ccf274c95beb&units=metric`;
     const res = await fetch(url);
     const data = await res.json(); 
     let error = new Error(res.statusText);
-    if(error.message == "Not Found" || city.value.length ==0) {
+    if(error.message === "Not Found" || city.value.length ===0) {
         weatherIcon.className = 'weather-icon owf';
         temperature.textContent = "";
         weatherDescription.textContent = "";
@@ -280,17 +268,15 @@ async function getWeather(myLang) {
         
     }
    else {
-    weatherDescription.textContent = "";
+    weatherDescription.textContent = data.weather[0].description;
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
     temperature.textContent = `${Math.floor(data.main.temp)}°C`;
-    weatherDescription.textContent = data.weather[0].description;
     wind.textContent = `${i18Obj[myLang]["Wind speed:"]} ${Math.floor(data.wind.speed)} ${i18Obj[myLang]["m/s"]}`;
     humidity.textContent = `${i18Obj[myLang]["Humidity:"]}: ${Math.floor(data.main.humidity)} %`;
 }
   }
   city.addEventListener('change', () => {
         weatherIcon.className = 'weather-icon owf';
-        let myLang = defineLang();
         getWeather();
      
     
@@ -318,7 +304,7 @@ async function getQuotes() {
         quote.textContent = `"${data[randIndex].text}"`;
         
     }
-    else {
+    else if(!quote.classList.contains('in-rus')) {
         let quotes = './js/quotes.json';
         const res = await fetch(quotes);
         const data = await res.json(); 
@@ -423,7 +409,6 @@ function playAudio() {
     if(isPlay == false) {
         audio.src = `./assets/sounds/${playList[startAudio].title}.mp3`;
         audio.currentTime = stopTime;
-
         playingAudio.textContent = `${playList[startAudio].title}`;
         songsList.forEach(el => el.classList.remove('item-active'));
         songsList[startAudio].classList.add('item-active');
@@ -436,7 +421,6 @@ function playAudio() {
     audio.pause();
     stopTime = audio.currentTime;
     isPlay = false;
-
    }
   }
 
@@ -608,11 +592,6 @@ function rememberVOlume () {
        notesArray.push(note.outerHTML);
 
         }   
-
-/*let not = localStorage.getItem('obj');
-console.log(not)
-let json = not + notesArray;
-localStorage.setItem('obj', json);*/
 listStatus();
 
     }   
@@ -724,13 +703,12 @@ function turnCheckBoxSettings () {
         targetElement.classList.remove('hidden-item');
 
     }
-    else if (!event.target.checked) {
+    else if (!event.target.checked ) {
         event.target.removeAttribute("checked", "checked");
         let newValue = event.target.closest('input').name;
         let targetElement = document.querySelector(`.${newValue}`)
         targetElement.classList.add('hidden-item');
     }
-
 }
 
 hideElemSettings.forEach(el => 
@@ -738,6 +716,7 @@ hideElemSettings.forEach(el =>
     turnCheckBoxSettings();
 
 }));
+
 
 
 const bgSettings = document.querySelectorAll('.chBckgr');
@@ -788,8 +767,8 @@ async function getFlickrBg(){
      const data = await res.json();
 
   const img = new Image();
-    img.src = `${data.photos.photo[rand].url_l}`;
-    img.onload = () => {      
+  img.src = `${data.photos.photo[rand].url_l}`;
+  img.onload = () => {      
    body.style.background =  `url(${img.src})`;
    body.style.backgroundColor =  'rgba(0,0,0,0.5)';
    body.style.backgroundSize =  'cover';
@@ -797,8 +776,6 @@ async function getFlickrBg(){
     }
     
  }
-
-
 
 function BgChoose () {
     if (event.target.checked) {
@@ -835,23 +812,8 @@ bgSettings.forEach(el =>
 
 }));
 
-
-
-/*function detectLang() {
-
-    let daytime = getTimeOfDay();
-      console.log(greeting.dataset.id);
-    console.log(i18Obj.ru[greeting.dataset.id])
-
-}
-
-detectLang()*/
-
-//const languages = document.querySelectorAll('.lang');
 const rulang = document.getElementById('Rus');
 const enlang = document.getElementById('English');
-
-
 function getTranslate (languages) {
   const dictionary = document.querySelectorAll('[data-i18]');
   dictionary.forEach((el) => {
@@ -863,20 +825,18 @@ function getTranslate (languages) {
   placeholders.forEach((el) => {
   let attr =   el.getAttribute("placeholder");
   el.placeholder = i18Obj[languages][el.dataset.placeholder];
-
-   // el.textContent = i18Obj[languages][el.dataset.i18];
   });
 
 
 }
 rulang.addEventListener('click', () => {
-    getWeather()
 
     getTranslate('ru');
     quote.classList.remove('in-eng');
     quote.classList.add('in-rus');
     getQuotes();
-    defineLang() ;getWeather()
+    defineLang() ;getWeather();
+  
 
 
 });
@@ -899,11 +859,103 @@ function defineLang() {
     return myLang;
 }
 
+function saveMe (){
+document.querySelectorAll(".to-save").forEach(el => {
+    el.onchange = () => localStorage.setItem(el.id, el.checked);
+    el.checked = localStorage.getItem(el.id) === "true";
+    checkMe(el);
+  })
+};
+
+saveMe();
+
+function checkMe(el) {
+   if (el.checked){
+    let blocks = document.querySelector(`.${el.name}`);
+    blocks.setAttribute("checked", "checked");
+    blocks.classList.remove('hidden-item');   
+   }
+   else if (!el.checked){
+    let blocks = document.querySelector(`.${el.name}`);
+    blocks.setAttribute("checked", "checked");
+    blocks.classList.add('hidden-item'); 
+   }
+}
+
+//РАДИО КНОПКИ 
 
 
+const radios = document.querySelectorAll('.lang');
+const radiosContainer = document.querySelector('.langs');
+function recordBtnChanges() {
+    radiosContainer.addEventListener('change', () => {
+        let arr = []; arr.length = 0;
+        radios.forEach(el => arr.push(el.checked));
+        localStorage.setItem ("object", JSON.stringify(arr));
+    })
+}
+
+recordBtnChanges();
+
+function changeLangBtn(myLang) {
+   let myVal =  JSON.parse (localStorage.getItem ("object"));
+   for(let i = 0; i < myVal.length; i++) {
+    radios[i].checked = myVal[i];
+}
+myLang = defineLang();
+if(myLang == "ru") {
+    getTranslate('ru');
+    quote.classList.remove('in-eng');
+    quote.classList.add('in-rus');
+    getQuotes();
+    defaultWeather(); 
+}
+else if(myLang == "en"){
+    getTranslate('en')
+    quote.classList.remove('in-rus');
+    getQuotes();
+    defaultWeather() ;
+
+}
+}
+changeLangBtn();
+
+//апи картинки
+
+const apisBtn = document.querySelectorAll('.chBckgr');
+const apisContainer = document.querySelector('.apis');
+function recordApisChanges() {
+    apisContainer.addEventListener('change', () => {
+        let arr = []; arr.length = 0;
+        apisBtn.forEach(el => arr.push(el.checked));
+        localStorage.setItem ("objectApis", JSON.stringify(arr));
+    })
+}
+
+recordApisChanges();
 
 
+function changeLangApisBtn() {
+    let myVal =  JSON.parse (localStorage.getItem ("objectApis"));
+    for(let i = 0; i < myVal.length; i++) {
+        apisBtn[i].checked = myVal[i];
+ }
+ apisBtn.forEach(el => {
+    let b = '';
+    el.checked == true? b = el.id : false
+    
+ if(b == "Github") {
+    bgChange();
 
+ }     
+ else if( b == "Flickr") {
+    getFlickrBg();
 
+ }  
+ else if( b == "Unsplash") {
+    getUnsplashBg();
 
+ } }  )
+}
 
+ changeLangApisBtn()
