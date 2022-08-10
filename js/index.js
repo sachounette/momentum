@@ -1,11 +1,16 @@
 import i18Obj from './translate.js'
+
 window.addEventListener('load', getLocalStorage);
 
 function defineLang() {
     const langs = document.querySelectorAll('.lang');
     let cussrentLang;
-    langs.forEach(el => el.checked?  cussrentLang = el : false);
-  let myLang = cussrentLang.value;
+    langs.forEach(el => {
+        if(el.checked) {
+            cussrentLang = el.value;
+        }
+    });
+  let myLang = cussrentLang;
     return myLang;
 }
 /* Добавляем время на страницу*/
@@ -90,16 +95,6 @@ function getLocalStorage() {
 
         }
      let settingsElemList  = document.querySelector('.popup__text');
-    //   settingsElemList.innerHTML = '';
-/*console.log(localStorage.getItem('settings'))
-     if(localStorage.getItem('settings')) {
-          let notes = localStorage.getItem('settings');
-            notes = notes.split('').filter(el => el!= ",").join('');
-                     settingsElemList.insertAdjacentHTML('beforeend' , notes);
-
-
-        }*/
-     
         }
 
 
@@ -121,11 +116,14 @@ function bgChange(){
     const hours = date.getHours();
     let daytime =  Math.floor(hours/6);
     let number = rand;
-    body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfTheDay[daytime]}/${number}.jpg')`;
+    //   body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
+
+    body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfTheDay[daytime]}/${number}.jpg')`;
+
    // setTimeout(bgChange, 1000);
 
 }
-bgChange();
+//bgChange();
 
 const leftBtn = document.querySelector('.slide-prev');
 const rightBtn = document.querySelector('.slide-next');
@@ -142,7 +140,8 @@ if(body.classList.contains('github-bg')) {
     const img = new Image();
     img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
     img.onload = () => {      
-   body.style.backgroundImage =  `url(${img.src})`;
+
+ body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
 
   }; 
 
@@ -155,7 +154,8 @@ else {
     const img = new Image();
     img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
     img.onload = () => {      
-        body.style.backgroundImage =  `url(${img.src})`;
+         body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
+
     }; 
 }}
 else if(body.classList.contains('flickr-bg')) {
@@ -177,11 +177,12 @@ rightBtn.addEventListener('click', () => {
       if (rand < 10) {
           rand = "0"+rand;
       }
+
       const img = new Image();
       img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
       img.onload = () => {      
 
-        body.style.backgroundImage =  `url(${img.src})`;
+   body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
     };   
   }
   else {
@@ -192,7 +193,7 @@ rightBtn.addEventListener('click', () => {
       const img = new Image();
       img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${daypart}/${rand}.jpg`;
       img.onload = () => {      
-        body.style.backgroundImage =  `url(${img.src})`;
+        body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
     };   
   }}
   else if(body.classList.contains('flickr-bg')) {
@@ -302,8 +303,13 @@ const author = document.querySelector('.author');
 const quote = document.querySelector('.quote');
 const quoteBtn = document.querySelector('.change-quote');
  
+
+
+
+
 async function getQuotes(myLang) {  
     myLang = defineLang();
+   
     if(myLang == "ru") {
         let quotes = './js/rus-quotes.json';
         const res = await fetch(quotes);
@@ -721,10 +727,13 @@ function turnCheckBoxSettings () {
 }
 
 hideElemSettings.forEach(el => 
+    {
+
     el.addEventListener('click', (event) => {
     turnCheckBoxSettings();
-
-}));
+    })
+}
+)
 
 
 
@@ -759,8 +768,11 @@ async function getUnsplashBg(){
     const img = new Image();
     img.src = `${data.urls.regular}`;
     img.onload = () => {      
-   body.style.background =  `url(${img.src})`;
-   body.style.backgroundColor =  'rgba(0,0,0,0.5)';
+  
+        body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
+        body.classList.remove('github-bg');
+   body.classList.remove('flickr-bg');
+   body.classList.add('unsplash-bg');
    body.style.backgroundSize =  'cover';
 
 
@@ -778,11 +790,15 @@ async function getFlickrBg(){
   const img = new Image();
   img.src = `${data.photos.photo[rand].url_l}`;
   img.onload = () => {      
-   body.style.background =  `url(${img.src})`;
-   body.style.backgroundColor =  'rgba(0,0,0,0.5)';
+
+  // body.style.background =  `url(${img.src}`;
+   body.style.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${img.src}`;
    body.style.backgroundSize =  'cover';
 
     }
+    body.classList.remove('github-bg');
+    body.classList.remove('unsplash-bg');
+    body.classList.add('flickr-bg');
     
  }
 
@@ -791,8 +807,6 @@ function BgChoose () {
         if(event.target.value == 'Github'){
           //  body.style.background = 'none';
             body.classList.add('github-bg');
-            body.style.backgroundColor =  'rgba(0,0,0,0.5)';
-
             body.classList.remove('flickr-bg');
             body.classList.remove('unsplash-bg');
             bgChange();
@@ -841,10 +855,8 @@ function getTranslate (languages) {
 rulang.addEventListener('click', () => {
 
     getTranslate('ru');
-    quote.classList.remove('in-eng');
-    quote.classList.add('in-rus');
     getQuotes();
-    defineLang() ;getWeather();
+    defineLang();getWeather();
   
 
 
@@ -853,9 +865,9 @@ rulang.addEventListener('click', () => {
 enlang.addEventListener('click', () => {
 
 getTranslate('en')
-quote.classList.remove('in-rus');
 getQuotes();
-defineLang() ;getWeather()
+defineLang();
+getWeather();
 
 });
 
@@ -863,7 +875,8 @@ defineLang() ;getWeather()
 function saveMe (){
 document.querySelectorAll(".to-save").forEach(el => {
     el.onchange = () => localStorage.setItem(el.id, el.checked);
-    el.checked = localStorage.getItem(el.id) === "true";
+    if(localStorage[el.id]){
+    el.checked = localStorage.getItem(el.id) === "true";}
     checkMe(el);
   })
 };
@@ -899,6 +912,7 @@ function recordBtnChanges() {
 recordBtnChanges();
 
 function changeLangBtn(myLang) {
+    if(localStorage.object) {
    let myVal =  JSON.parse (localStorage.getItem ("object"));
    for(let i = 0; i < myVal.length; i++) {
     radios[i].checked = myVal[i];
@@ -919,7 +933,7 @@ else if(myLang == "en"){
     getQuotes();
     defaultWeather() ;
 
-}
+}}
 }
 changeLangBtn();
 
@@ -931,24 +945,27 @@ function recordApisChanges() {
     apisContainer.addEventListener('change', () => {
         let arr = []; arr.length = 0;
         apisBtn.forEach(el => arr.push(el.checked));
+
         localStorage.setItem ("objectApis", JSON.stringify(arr));
     })
 }
 
 recordApisChanges();
 
-
 function changeLangApisBtn() {
+    if(localStorage.objectApis) {
     let myVal =  JSON.parse (localStorage.getItem ("objectApis"));
     for(let i = 0; i < myVal.length; i++) {
         apisBtn[i].checked = myVal[i];
- }
+ }}
  apisBtn.forEach(el => {
     let b = '';
     el.checked == true? b = el.id : false
     
  if(b == "Github") {
+    
     bgChange();
+
 
  }     
  else if( b == "Flickr") {
@@ -962,3 +979,7 @@ function changeLangApisBtn() {
 }
 
  changeLangApisBtn()
+
+
+
+
