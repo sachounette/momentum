@@ -1,5 +1,13 @@
 import i18Obj from './translate.js'
 window.addEventListener('load', getLocalStorage);
+
+function defineLang() {
+    const langs = document.querySelectorAll('.lang');
+    let cussrentLang;
+    langs.forEach(el => el.checked?  cussrentLang = el : false);
+  let myLang = cussrentLang.value;
+    return myLang;
+}
 /* Добавляем время на страницу*/
 const time = document.querySelector('.time');
 
@@ -294,8 +302,9 @@ const author = document.querySelector('.author');
 const quote = document.querySelector('.quote');
 const quoteBtn = document.querySelector('.change-quote');
  
-async function getQuotes() {  
-    if(quote.classList.contains('in-rus')) {
+async function getQuotes(myLang) {  
+    myLang = defineLang();
+    if(myLang == "ru") {
         let quotes = './js/rus-quotes.json';
         const res = await fetch(quotes);
         const data = await res.json(); 
@@ -304,7 +313,7 @@ async function getQuotes() {
         quote.textContent = `"${data[randIndex].text}"`;
         
     }
-    else if(!quote.classList.contains('in-rus')) {
+    else if(myLang == "en") {
         let quotes = './js/quotes.json';
         const res = await fetch(quotes);
         const data = await res.json(); 
@@ -528,7 +537,7 @@ function rememberVOlume () {
         volumeBtn.classList.add('unmute');
         volumeBtn.style.backgroundImage = "url('./assets/svg/volume.svg')";
         let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
-       volumeToSeek = (volumeSLider.value/100 * parseInt(volumeSLiderWidth));
+    let   volumeToSeek = (volumeSLider.value/100 * parseInt(volumeSLiderWidth));
        volumeToSeek = volumeToSeek/parseInt(volumeSLiderWidth);
    audio.volume = volumeToSeek;
 
@@ -850,14 +859,6 @@ defineLang() ;getWeather()
 
 });
 
-
-function defineLang() {
-    const langs = document.querySelectorAll('.lang');
-    let cussrentLang;
-    langs.forEach(el => el.checked?  cussrentLang = el : false);
-  let myLang = cussrentLang.value;
-    return myLang;
-}
 
 function saveMe (){
 document.querySelectorAll(".to-save").forEach(el => {
