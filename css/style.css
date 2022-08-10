@@ -63,7 +63,7 @@ background-repeat: no-repeat;
 }
 
 
-input[type=range] {
+/*input[type=range] {
   height: 32px;
   -webkit-appearance: none;
   background: transparent;
@@ -97,7 +97,7 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]:focus::-webkit-slider-runnable-track {
   background: #B6B6B6;
 }
-
+8\*/
 
 
 
