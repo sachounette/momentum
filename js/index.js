@@ -528,14 +528,14 @@ function rememberVOlume () {
    if (event.target.classList.contains('unmute')) {
         volumeBtn.classList.remove('unmute');
         volumeBtn.classList.add('mute');
-        volumeBtn.style.backgroundImage = "url('./assets/svg/no-volume.svg')";
+        volumeBtn.style.backgroundImage = "url('../../assets/svg/no-volume.svg')";
         audio.volume = 0;
 
     }
     else if (event.target.classList.contains('mute')) {
         volumeBtn.classList.remove('mute');
         volumeBtn.classList.add('unmute');
-        volumeBtn.style.backgroundImage = "url('./assets/svg/volume.svg')";
+        volumeBtn.style.backgroundImage = "url('../../assets/svg/volume.svg')";
         let volumeSLiderWidth = window.getComputedStyle(volumeSLider).width;
     let   volumeToSeek = (volumeSLider.value/100 * parseInt(volumeSLiderWidth));
        volumeToSeek = volumeToSeek/parseInt(volumeSLiderWidth);
