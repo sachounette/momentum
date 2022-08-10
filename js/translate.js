@@ -37,7 +37,7 @@ const i18Obj = {
       'Good evening': 'Добрый вечер',
       'Good morning' : 'Доброе утро',
       'Good night': 'Доброй ночи',
-      'Good afternoon': 'Добрый вечер',
+      'Good afternoon': 'Добрый день',
       'Settings': 'Настройки',
       "To do": "Список дел",
       "Hide Elements" : "Спрятать элементы", 

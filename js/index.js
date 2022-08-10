@@ -907,12 +907,14 @@ if(myLang == "ru") {
     getTranslate('ru');
     quote.classList.remove('in-eng');
     quote.classList.add('in-rus');
+   
     getQuotes();
     defaultWeather(); 
 }
 else if(myLang == "en"){
     getTranslate('en')
     quote.classList.remove('in-rus');
+   
     getQuotes();
     defaultWeather() ;
 
